@@ -72,12 +72,12 @@ echo "========================================="
 echo
 echo -n " - Ejecutando actualizacion del sistema operativo... "
 apt-get -qq update && apt-get -qq upgrade > /dev/null
-echo -e "${grn}OK${end}\n"
+echo    "${grn}OK${end}"
 
 echo -n " - Reconfigurando dash... "
 debconf-set-selections <<< "dash dash/sh boolean false"
 dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
-echo -e "${grn}OK${end}\n"
+echo    "${grn}OK${end}"
 
 echo -n " - Desinstalando apparmor... "
 service apparmor stop
