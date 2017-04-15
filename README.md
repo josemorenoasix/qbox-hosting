@@ -15,5 +15,5 @@ nano install.cfg
 ## Execute as sudo install.sh
 sudo bash install.sh
 
-Wait a few minutes... and done!
+## Wait a few minutes... and done!
 
