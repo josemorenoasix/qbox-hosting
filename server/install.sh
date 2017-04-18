@@ -72,12 +72,12 @@ echo "========================================="
 echo
 echo -n " - Ejecutando actualizacion del sistema operativo... "
 apt-get -qq update && apt-get -qq upgrade > /dev/null
-echo    "${grn}OK${end}"
+echo -e "${grn}OK${end}\n"
 
 echo -n " - Reconfigurando dash... "
 debconf-set-selections <<< "dash dash/sh boolean false"
 dpkg-reconfigure -f noninteractive dash > /dev/null 2>&1
-echo    "${grn}OK${end}"
+echo -e "${grn}OK${end}\n"
 
 echo -n " - Desinstalando apparmor... "
 service apparmor stop
@@ -328,8 +328,8 @@ apt-get -qq install bind9 dnsutils haveged > /dev/null
 echo -e "${grn}OK${end}\n"
 
 echo    " - Herramientas webstats... "
-echo    "   · Paquetes: vlogger webalizer"
-echo -n "               awstats geoip-database... "
+echo    "   · Paquetes: vlogger, webalizer,"
+echo -n "               awstats, geoip-database... "
 apt-get -qq install vlogger webalizer awstats geoip-database libclass-dbi-mysql-perl > /dev/null 2>&1
 echo    "${grn}OK${end}"
 echo -n "   · ${blu}Deshabilitando awstats en cron... ${end}"
@@ -414,7 +414,7 @@ sed -i '/<Directory \/var\/lib\/roundcube\/>/a\  AddType application\/x-httpd-ph
 echo    "${grn}OK${end}"
 echo -n "   · Editando phpmyadmin.conf para cambiar URL por defecto de /phpmyadmin/ a /websql/ ... "
 cp /etc/apache2/conf-available/phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf.orig
-sed -i "s/Alias \/phpmyadmin/Alias \/websql/"  /etc/apache2/conf-available/phpmyadmin.conf
+sed -i "s/Alias \/phpmyadmin/Alias \/$CFG_PMA_ALIAS/"  /etc/apache2/conf-available/phpmyadmin.conf
 echo    "${grn}OK${end}"
 service apache2 restart
 echo -n "   · Editando roundcube config.inc.php para configurar servidor por defecto como localhost... "
@@ -422,66 +422,114 @@ cp /etc/roundcube/config.inc.php /etc/roundcube/config.inc.php.orig
 sed -i "/default_host/s/''/'localhost'/"  /etc/roundcube/config.inc.php
 echo -e "${grn}OK${end}\n"
 
-
 cd /tmp
-wget -O ispconfig.tar.gz https://git.ispconfig.org/ispconfig/ispconfig3/repository/archive.tar.gz?ref=stable-3.1 > /dev/null
+wget -qO ispconfig.tar.gz https://git.ispconfig.org/ispconfig/ispconfig3/repository/archive.tar.gz?ref=stable-3.1
 tar xfz ispconfig.tar.gz
 cd ispconfig3*/install/
-  echo "Creando fichero de configuracion autoinstall.ini..."
-  touch autoinstall.ini
-  echo "[install]" > autoinstall.ini
-  echo "language=en" >> autoinstall.ini
-  echo "install_mode=standard" >> autoinstall.ini
-  echo "hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
-  echo "mysql_hostname=localhost" >> autoinstall.ini
-  echo "mysql_root_user=root" >> autoinstall.ini
-  echo "mysql_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
-  echo "mysql_database=dbispconfig" >> autoinstall.ini
-  echo "mysql_charset=utf8" >> autoinstall.ini
-  echo "http_server=apache" >> autoinstall.ini
-  echo "ispconfig_port=8080" >> autoinstall.ini
-  echo "ispconfig_use_ssl=y" >> autoinstall.ini
-  echo "ispconfig_admin_password=$CFG_ISPCONFIG_ADMIN_PWD" >> autoinstall.ini
-  echo
-  echo "[ssl_cert]" >> autoinstall.ini
-  echo "ssl_cert_country=$SUBJ_C" >> autoinstall.ini
-  echo "ssl_cert_state=$SUBJ_ST" >> autoinstall.ini
-  echo "ssl_cert_locality=$SUBJ_L" >> autoinstall.ini
-  echo "ssl_cert_organisation=$SUBJ_O" >> autoinstall.ini
-  echo "ssl_cert_organisation_unit=$SUBJ_OU" >> autoinstall.ini
-  echo "ssl_cert_common_name=$SUBJ_CN" >> autoinstall.ini
-  echo "ssl_cert_email=hostmaster@$DOMAIN" >> autoinstall.ini
-  echo
-  echo "[expert]" >> autoinstall.ini
-  echo "mysql_ispconfig_user=ispconfig" >> autoinstall.ini
-  echo "mysql_ispconfig_password=$CFG_MYSQL_ISPCONFIG_PWD" >> autoinstall.ini
-  echo "join_multiserver_setup=n" >> autoinstall.ini
-  echo "mysql_master_hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
-  echo "mysql_master_root_user=root" >> autoinstall.ini
-  echo "mysql_master_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
-  echo "mysql_master_database=dbispconfig" >> autoinstall.ini
-  echo "configure_mail=y" >> autoinstall.ini
-  echo "configure_jailkit=y" >> autoinstall.ini
-  echo "configure_ftp=y" >> autoinstall.ini
-  echo "configure_dns=y" >> autoinstall.ini
-  echo "configure_apache=y" >> autoinstall.ini
-  echo "configure_nginx=n" >> autoinstall.ini
-  echo "configure_firewall=y" >> autoinstall.ini
-  echo "install_ispconfig_web_interface=y" >> autoinstall.ini
-  echo
-  echo "[update]" >> autoinstall.ini
-  echo "do_backup=yes" >> autoinstall.ini
-  echo "mysql_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
-  echo "mysql_master_hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
-  echo "mysql_master_root_user=root" >> autoinstall.ini
-  echo "mysql_master_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
-  echo "mysql_master_database=dbispconfig" >> autoinstall.ini
-  echo "reconfigure_permissions_in_master_database=no" >> autoinstall.ini
-  echo "reconfigure_services=yes" >> autoinstall.ini
-  echo "ispconfig_port=8080" >> autoinstall.ini
-  echo "create_new_ispconfig_ssl_cert=no" >> autoinstall.ini
-  echo "reconfigure_crontab=yes" >> autoinstall.ini
-  echo | php -q install.php --autoinstall=autoinstall.ini
-  service apache2 restart
+touch autoinstall.ini
+echo "[install]" > autoinstall.ini
+echo "language=en" >> autoinstall.ini
+echo "install_mode=standard" >> autoinstall.ini
+echo "hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
+echo "mysql_hostname=localhost" >> autoinstall.ini
+echo "mysql_root_user=root" >> autoinstall.ini
+echo "mysql_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
+echo "mysql_database=dbispconfig" >> autoinstall.ini
+echo "mysql_charset=utf8" >> autoinstall.ini
+echo "http_server=apache" >> autoinstall.ini
+echo "ispconfig_port=8080" >> autoinstall.ini
+echo "ispconfig_use_ssl=y" >> autoinstall.ini
+echo >> autoinstall.ini
+echo "[ssl_cert]" >> autoinstall.ini
+echo "ssl_cert_country=$SUBJ_C" >> autoinstall.ini
+echo "ssl_cert_state=$SUBJ_ST" >> autoinstall.ini
+echo "ssl_cert_locality=$SUBJ_L" >> autoinstall.ini
+echo "ssl_cert_organisation=$SUBJ_O" >> autoinstall.ini
+echo "ssl_cert_organisation_unit=$SUBJ_OU" >> autoinstall.ini
+echo "ssl_cert_common_name=$SUBJ_CN" >> autoinstall.ini
+echo "ssl_cert_email=hostmaster@$CFG_DOMAIN" >> autoinstall.ini
+echo >> autoinstall.ini
+echo "[expert]" >> autoinstall.ini
+echo "mysql_ispconfig_user=ispconfig" >> autoinstall.ini
+echo "mysql_ispconfig_password=$CFG_MYSQL_ISPCONFIG_PWD" >> autoinstall.ini
+echo "join_multiserver_setup=n" >> autoinstall.ini
+echo "mysql_master_hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
+echo "mysql_master_root_user=root" >> autoinstall.ini
+echo "mysql_master_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
+echo "mysql_master_database=dbispconfig" >> autoinstall.ini
+echo "configure_mail=y" >> autoinstall.ini
+echo "configure_jailkit=y" >> autoinstall.ini
+echo "configure_ftp=y" >> autoinstall.ini
+echo "configure_dns=y" >> autoinstall.ini
+echo "configure_apache=y" >> autoinstall.ini
+echo "configure_nginx=n" >> autoinstall.ini
+echo "configure_firewall=y" >> autoinstall.ini
+echo "install_ispconfig_web_interface=y" >> autoinstall.ini
+echo >> autoinstall.ini
+echo "[update]" >> autoinstall.ini
+echo "do_backup=yes" >> autoinstall.ini
+echo "mysql_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
+echo "mysql_master_hostname=$CFG_HOSTNAME_FQDN" >> autoinstall.ini
+echo "mysql_master_root_user=root" >> autoinstall.ini
+echo "mysql_master_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
+echo "mysql_master_database=dbispconfig" >> autoinstall.ini
+echo "reconfigure_permissions_in_master_database=no" >> autoinstall.ini
+echo "reconfigure_services=yes" >> autoinstall.ini
+echo "ispconfig_port=8080" >> autoinstall.ini
+echo "create_new_ispconfig_ssl_cert=no" >> autoinstall.ini
+echo "reconfigure_crontab=yes" >> autoinstall.ini
+echo | php -q install.php --autoinstall=autoinstall.ini
+echo 
+echo    " - Ultimos ajuste para la instalación de ISPConfig:"
+echo -n "   · Eliminando ficheros creados durante la instalacion... "
 cd 
 rm -rf /tmp/ispconfig*
+echo    "${grn}OK${end}"
+echo -n "   · Actualizando password del administrador del panel ISPConfig... "
+echo "UPDATE dbispconfig.sys_user set passwort = md5('$CFG_ISPCONFIG_ADMIN_PWD') where username = 'admin';" | mysql
+echo    "${grn}OK${end}"
+echo -n "   · Creando un usuario remoto para la API de ISPConfig... "
+echo "INSERT INTO dbispconfig.remote_user (sys_userid, sys_groupid, sys_perm_user, sys_perm_group, sys_perm_other, remote_username, remote_password, remote_functions) VALUES (1, 1, 'riud', 'riud', '', '$CFG_ISPCONFIG_API_USERNAME', '$CFG_ISPCONFIG_API_PWD', '$CFG_ISPCONFIG_API_PRIVILEGES');" | mysql
+echo    "${grn}OK${end}"
+echo -n "   · Habilitando redireccion automatica (http --> https) del panel de administracion... "
+sed -i '/<\/VirtualHost>/i\  ErrorDocument 400 "<script> if(window.location.protocol !='\'https:\''){ location.href = location.href.replace('\'http://\'', '\'https://\'');}</script>"' /etc/apache2/sites-available/ispconfig.vhost
+echo    "${grn}OK${end}"
+echo -n "   · Reiniciando apache2... "
+service apache2 restart
+echo    "${grn}OK${end}"
+while true; do
+  read -r -n 1 -p "   · ¿Quieres eliminar el script de instalacion? [y/n]: " REPLY
+  case $REPLY in
+    [yY]) echo ""; rm install.sh; echo "     · Eliminando script de instalacion... ${blu}YES${end}"; break; ;;
+    [nN]) echo ""; echo "     · Eliminando script de instalacion... ${red}NO${end}"; break; ;;
+    *) 
+  esac
+done
+echo    "${yel}   · AVISO: El fichero de configuracion contiene los usuarios/claves utilizados durante la instalacion!${end}"
+while true; do
+  read -r -n 1 -p "     · ¿Quieres eliminarlo? [y/n]: " REPLY
+  case $REPLY in
+    [yY]) echo ""; rm install.cfg; echo "     · Eliminando fichero de configuracion... ${blu}YES${end}"; break; ;;
+    [nN]) echo ""; echo "     · Eliminando fichero de configuracion... ${red}NO${end}"; echo "${blu}       · Guardalo en un sitio seguro!!${end}"; break; ;;
+    *)
+  esac
+done
+sleep 2
+echo
+echo    "  ============================================="
+echo    "              INSTALACION FINALIZADA           "
+echo    "  ============================================="
+echo    "   - ISPConfig"
+echo    "     · https://$CFG_DOMAIN:8080/"
+echo
+echo    "   - phpMyAdmin"
+echo    "     · https://$CFG_DOMAIN/$CFG_PMA_ALIAS/"
+echo
+echo    "   - roundcube"
+echo    "     · https://$CFG_DOMAIN/webmail/"
+echo
+echo    "   - Registro de la instalacion"
+echo    "     · /var/log/ispconfig_setup.log"
+echo    "  ============================================="
+read -p "              PULSA ENTER PARA SALIR"
+echo
