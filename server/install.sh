@@ -489,7 +489,7 @@ echo -n "   · Actualizando password del administrador del panel ISPConfig... "
 echo "UPDATE dbispconfig.sys_user set passwort = md5('$CFG_ISPCONFIG_ADMIN_PWD') where username = 'admin';" | mysql
 echo    "${grn}OK${end}"
 echo -n "   · Creando un usuario remoto para la API de ISPConfig... "
-echo "INSERT INTO dbispconfig.remote_user (sys_userid, sys_groupid, sys_perm_user, sys_perm_group, sys_perm_other, remote_username, remote_password, remote_functions) VALUES (1, 1, 'riud', 'riud', '', '$CFG_ISPCONFIG_API_USERNAME', '$CFG_ISPCONFIG_API_PWD', '$CFG_ISPCONFIG_API_PRIVILEGES');" | mysql
+echo "INSERT INTO dbispconfig.remote_user (sys_userid, sys_groupid, sys_perm_user, sys_perm_group, sys_perm_other, remote_username, remote_password, remote_functions) VALUES (1, 1, 'riud', 'riud', '', '$CFG_ISPCONFIG_API_USERNAME', md5('$CFG_ISPCONFIG_API_PWD'), '$CFG_ISPCONFIG_API_PRIVILEGES');" | mysql
 echo    "${grn}OK${end}"
 echo -n "   · Habilitando redireccion automatica (http --> https) del panel de administracion... "
 sed -i '/<\/VirtualHost>/i\  ErrorDocument 400 "<script> if(window.location.protocol !='\'https:\''){ location.href = location.href.replace('\'http://\'', '\'https://\'');}</script>"' /etc/apache2/sites-available/ispconfig.vhost
@@ -531,5 +531,5 @@ echo
 echo    "   - Registro de la instalacion"
 echo    "     · /var/log/ispconfig_setup.log"
 echo    "  ============================================="
-read -p "              PULSA ENTER PARA SALIR"
+read -p "  ====== = = PULSA ENTER PARA SALIR = = ======"
 echo
