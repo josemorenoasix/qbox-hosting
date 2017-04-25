@@ -412,7 +412,7 @@ cp /etc/apache2/conf-enabled/roundcube.conf /etc/apache2/conf-enabled/roundcube.
 sed -i "s/#    Alias \/roundcube \/var\/lib\/roundcube/    Alias \/roundcube \/var\/lib\/roundcube\n    Alias \/webmail \/var\/lib\/roundcube/" /etc/apache2/conf-enabled/roundcube.conf
 sed -i '/<Directory \/var\/lib\/roundcube\/>/a\  AddType application\/x-httpd-php .php' /etc/apache2/conf-enabled/roundcube.conf
 echo    "${grn}OK${end}"
-echo -n "   · Editando phpmyadmin.conf para cambiar URL por defecto de /phpmyadmin/ a /websql/ ... "
+echo -n "   · Editando phpmyadmin.conf para cambiar URL por defecto de /phpmyadmin/ a /$CFG_PMA_ALIAS/ ... "
 cp /etc/apache2/conf-available/phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf.orig
 sed -i "s/Alias \/phpmyadmin/Alias \/$CFG_PMA_ALIAS/"  /etc/apache2/conf-available/phpmyadmin.conf
 echo    "${grn}OK${end}"
