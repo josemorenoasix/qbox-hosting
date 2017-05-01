@@ -356,6 +356,9 @@ echo    "   · ${blu}Agregando numero maximo de intentos (maxretry)... ${end}"
 echo    "     · pureftpd... ${grn}OK${end}"
 echo    "     · dovecot-pop3imap... ${grn}OK${end}"
 echo    "     · postfix-sasl... ${grn}OK${end}"
+if [ ! -f "/var/log/mail"]; then
+  touch "/var/log/mail";
+fi 
 echo '
 [pureftpd]
 enabled  = true
