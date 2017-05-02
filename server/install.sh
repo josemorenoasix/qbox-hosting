@@ -523,7 +523,7 @@ echo    "  ============================================="
 echo    "              INSTALACION FINALIZADA           "
 echo    "  ============================================="
 echo    "   - ISPConfig"
-echo    "     · https://$CFG_DOMAIN:8081/"
+echo    "     · https://$CFG_DOMAIN:8082/"
 echo
 echo    "   - phpMyAdmin"
 echo    "     · https://$CFG_DOMAIN/$CFG_PMA_ALIAS/"
