@@ -440,7 +440,7 @@ echo "mysql_root_password=$CFG_MYSQL_ROOT_PWD" >> autoinstall.ini
 echo "mysql_database=dbispconfig" >> autoinstall.ini
 echo "mysql_charset=utf8" >> autoinstall.ini
 echo "http_server=apache" >> autoinstall.ini
-echo "ispconfig_port=8080" >> autoinstall.ini
+echo "ispconfig_port=8081" >> autoinstall.ini
 echo "ispconfig_use_ssl=y" >> autoinstall.ini
 echo >> autoinstall.ini
 echo "[ssl_cert]" >> autoinstall.ini
@@ -523,7 +523,7 @@ echo    "  ============================================="
 echo    "              INSTALACION FINALIZADA           "
 echo    "  ============================================="
 echo    "   - ISPConfig"
-echo    "     · https://$CFG_DOMAIN:8080/"
+echo    "     · https://$CFG_DOMAIN:8081/"
 echo
 echo    "   - phpMyAdmin"
 echo    "     · https://$CFG_DOMAIN/$CFG_PMA_ALIAS/"
