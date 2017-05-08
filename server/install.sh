@@ -496,6 +496,7 @@ rm -rf /tmp/ispconfig*
 echo    "${grn}OK${end}"
 echo -n "   · Actualizando el logotipo del panel ISPConfig... "
 echo "UPDATE dbispconfig.sys_ini set default_logo = '$CFG_ISPCONFIG_ADMIN_PWD' where sysini_id = 1;" | mysql
+echo    "${grn}OK${end}"
 echo -n "   · Actualizando password del administrador del panel ISPConfig... "
 echo "UPDATE dbispconfig.sys_user set passwort = md5('$CFG_ISPCONFIG_ADMIN_PWD') where username = 'admin';" | mysql
 echo    "${grn}OK${end}"
