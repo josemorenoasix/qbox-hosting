@@ -303,6 +303,12 @@ openssl req -new -newkey rsa:4096 -days 97300 -nodes -x509 -subj "/C=$SUBJ_C/ST=
 chmod 600 /etc/ssl/private/pure-ftpd.pem
 echo 1 > /etc/pure-ftpd/conf/TLS
 echo    "${grn}OK${end}"
+echo -n "     · Estableciendo FTP Passive Ports (29799 29899)..."
+echo "29799 29899" > /etc/pure-ftpd/conf/PassivePortRange
+echo "${grn}OK${end}"
+echo -n "     · Limitando el numero maximo de clientes FTP (50)..."
+echo "50" > /etc/pure-ftpd/conf/MaxClientsNumber
+echo "${grn}OK${end}"
 echo -n "     · Reiniciando pure-ftpd... "
 service pure-ftpd-mysql restart
 echo -e "${grn}OK${end}\n"
