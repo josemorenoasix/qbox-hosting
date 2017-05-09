@@ -31,8 +31,9 @@ fi
 
 # Comprobar acceso internet
 echo -n " - Comprobando conexion a internet... "
-ping -q -c 3 git.ispconfig.org > /dev/null 2>&1
-if [ ! "$?" -eq 0 ]; then
+echo -e "GET http://git.ispconfig.org HTTP/1.0\n\n" | nc git.ispconfig.org 80 > /dev/null 2>&1
+#ping -q -c 3 git.ispconfig.org > /dev/null 2>&1
+if [ "$?" -ne 0 ]; then
   echo -e "${red}ERROR: Sin acceso a internet.${end}\n"
   exit 1
 else
